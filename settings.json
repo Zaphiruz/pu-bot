@@ -1,0 +1,4 @@
+{
+	"commandToken": "!",
+	"api": "https://pu-api.herokuapp.com/graphql"
+}
