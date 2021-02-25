@@ -2,6 +2,7 @@ const discord = require("discord.js");
 
 import Ping from './commands/ping';
 import Cx from './commands/cx';
+import Help from './commands/help';
 
 export default class Bot {
 	static get EVENT_TYPES() {
@@ -22,7 +23,8 @@ export default class Bot {
 		this._.commands = {
 			[Bot.EVENT_TYPES.MESSAGE]: {
 				ping: new Ping(this._.bot, this.settings),
-				cx: new Cx(this._.bot, this.settings)
+				cx: new Cx(this._.bot, this.settings),
+				help: new Help(this._.bot, this.settings, this),
 			}
 		}
 

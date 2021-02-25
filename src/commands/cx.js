@@ -11,13 +11,12 @@ export default class CX extends CommandInterface {
 	}
 
 	async action(e, args) {
-		// e.channel.send(['pong', ...args].join(' '));
 		let broker = await this.fetchData(args[0]);
 		e.channel.send(`${JSON.stringify(broker.cxBrokerOne, null, '\t')}`);
 	}
 
 	help(e, args) {
-		e.channel.send('send this command with your favorite cx ticker');
+		e.channel.send('Send this command with your favorite cx ticker! i.e. `!cx RAT.NC1`');
 	}
 
 	fetchData(ticker) {
