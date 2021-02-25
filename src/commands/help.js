@@ -19,7 +19,7 @@ export default class Help extends CommandInterface {
 
 		let commands = Object.keys(this.context._.commands[Bot.EVENT_TYPES.MESSAGE]);
 
-		e.channel.send('Available commands: \n•' + commands.join('\n•'));
+		e.channel.send('Available commands: \n •' + commands.join('\n •'));
 	}
 
 	help(e, args) {

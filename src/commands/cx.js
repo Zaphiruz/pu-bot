@@ -12,7 +12,7 @@ export default class CX extends CommandInterface {
 
 	async action(e, args) {
 		let broker = await this.fetchData(args[0]);
-		e.channel.send(`${JSON.stringify(broker.cxBrokerOne, null, '\t')}`);
+		e.channel.send(`${JSON.stringify(broker, null, '\t')}`);
 	}
 
 	help(e, args) {
@@ -32,7 +32,7 @@ export default class CX extends CommandInterface {
 					}
 				}
 			}
-		`);
+		`).then(data => data.cxBrokerOne)
 	}
 }
 
