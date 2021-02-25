@@ -18,11 +18,14 @@ export default class CX extends CommandInterface {
 			return e.channel.send(`I couldn't find a broker for ${ticker}`);
 		}
 
+		let bid = broker.bid ? `${broker.bid.price.amount} ${broker.bid.price.currency} (${broker.bid.amount})` : 'None'
+		let ask = broker.ask ? `${broker.ask.price.amount} ${broker.ask.price.currency} (${broker.ask.amount})` : 'None'
+
 		let tableData = [
 			["Material", broker.material && broker.material.name || 'N/A'],
 			["Ticker", broker.ticker],
-			["Bid", `${broker.bid.price.amount} ${broker.bid.price.currency} (${broker.bid.amount})`],
-			["Ask", `${broker.ask.price.amount} ${broker.ask.price.currency} (${broker.ask.amount})`],
+			["Bid", `${bid}`],
+			["Ask", `${ask}`],
 		]
 
 		let display = AsciiTable.table(tableData, 200);

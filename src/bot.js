@@ -62,10 +62,15 @@ export default class Bot {
 		}
 	}
 
-	callAction(e, cmd, args, type) {
-		if (cmd in this._.commands[type]) {
-			console.log('Running command', cmd, args);
-			this._.commands[type][cmd].action(e, this._.commands[type][cmd].processArgs(args));
+	async callAction(e, cmd, args, type) {
+		try {
+			if (cmd in this._.commands[type]) {
+				console.log('Running command', cmd, args);
+				await this._.commands[type][cmd].action(e, this._.commands[type][cmd].processArgs(args));
+			}
+		} catch(err) {
+			e.channel.send(`That command failed. ${cmd}: ${args}`);
+			throw err;
 		}
 	}
 }
