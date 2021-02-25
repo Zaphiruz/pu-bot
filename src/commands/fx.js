@@ -16,7 +16,7 @@ export default class Ping extends CommandInterface {
 
 		let brokers;
 		if (base && quote) {
-			let broker = await this.fetchOne(base, quote);
+			let broker = await this.fetch('fxBrokerOne', { base, quote });
 			brokers = [broker];
 			if (!broker) {
 				return e.channel.send(`I couldn't find a broker for ${base} => ${quote}`);
@@ -24,12 +24,12 @@ export default class Ping extends CommandInterface {
 		} else if (base) {
 			let [base] = args;
 
-			brokers = await this.fetchMany(base);
+			brokers = await this.fetch('fxBrokerMany', { base });
 			if (!brokers.length) {
 				return e.channel.send(`I couldn't find any brokers for ${base}`);
 			}
 		} else {
-			brokers = await this.fetchAll();
+			brokers = await this.fetch('fxBrokerMany');
 			if (!brokers.length) {
 				return e.channel.send(`I couldn't find any brokers`);
 			}
@@ -43,42 +43,25 @@ export default class Ping extends CommandInterface {
 		e.channel.send('Send this command with your favorite currencies, or leave it blank for all options!\ni.e. `!fx NCC ICA`\ni.e. `!fx NCC`\ni.e.`!fx`');
 	}
 
-	fetchOne(base, quote) {
-		return request(this.settings.api, gql`
-			query {
-				fxBrokerOne(filter: {base: "${base}", quote: "${quote}"}) {
-					price {
-						close {
-							rate,
-							base,
-							quote
-						}
-					}
-				}
+	fetch(method, filter) {
+		let filterString = '';
+		if (filter) {
+			let queries = [];
+			for (let [key, value] of Object.entries(filter)) {
+				queries.push(`${key}: "${value}",`);
 			}
-		`).then(data => data.fxBrokerOne)
-	}
+			queries[queries.length - 1] = queries[queries.length - 1].slice(0, -1); // last ,
 
-	fetchMany(base) {
-		return request(this.settings.api, gql`
-			query {
-				fxBrokerMany(filter: {base: "${base}"}) {
-					price {
-						close {
-							rate,
-							base,
-							quote
-						}
-					}
-				}
-			}
-		`).then(data => data.fxBrokerMany)
-	}
+			filterString = [
+				'(filter: {',
+				...queries,
+				'})'
+			].join();
+		}
 
-	fetchAll() {
 		return request(this.settings.api, gql`
 			query {
-				fxBrokerMany {
+				${method}${filterString} {
 					price {
 						close {
 							rate,
@@ -88,7 +71,7 @@ export default class Ping extends CommandInterface {
 					}
 				}
 			}
-		`).then(data => data.fxBrokerMany)
+		`).then(data => data[method])
 	}
 
 	buildDisplay(...brokers) {
