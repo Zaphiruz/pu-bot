@@ -13,7 +13,7 @@ export default class CX extends CommandInterface {
 	async action(e, args) {
 		// e.channel.send(['pong', ...args].join(' '));
 		let broker = await this.fetchData(args[0]);
-		e.channel.send(`${JSON.stringify(broker.cxBrokerMany[0], null, '\t')}`);
+		e.channel.send(`${JSON.stringify(broker.cxBrokerOne, null, '\t')}`);
 	}
 
 	help(e, args) {
@@ -23,7 +23,7 @@ export default class CX extends CommandInterface {
 	fetchData(ticker) {
 		return request(this.settings.api, gql`
 			query {
-				cxBrokerMany(filter: {ticker: "${ticker}"}) {
+				cxBrokerOne(filter: {ticker: "${ticker}"}) {
 					material {
 						name
 					}
