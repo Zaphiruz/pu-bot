@@ -1,5 +1,6 @@
 import CommandInterface from './-interface';
 import { request, gql } from 'graphql-request';
+import AsciiTable from 'ascii-data-table'
 
 export default class CX extends CommandInterface {
 	constructor(bot, settings) {
@@ -11,8 +12,21 @@ export default class CX extends CommandInterface {
 	}
 
 	async action(e, args) {
-		let broker = await this.fetchData(args[0]);
-		e.channel.send(`${JSON.stringify(broker, null, '\t')}`);
+		let [ticker] = args;
+		let broker = await this.fetchData(ticker);
+		if (!broker) {
+			return e.channel.send(`I couldn't find a broker for ${ticker}`);
+		}
+
+		let tableData = [
+			["Material", broker.material && broker.material.name || 'N/A'],
+			["Ticker", broker.ticker],
+			["Bid", `${broker.bid.price.amount} ${broker.bid.price.currency} (${broker.bid.amount})`],
+			["Ask", `${broker.ask.price.amount} ${broker.ask.price.currency} (${broker.ask.amount})`],
+		]
+
+		let display = AsciiTable.table(tableData, 200);
+		return e.channel.send(`\`\`\`\n${display}\n\`\`\``);
 	}
 
 	help(e, args) {
@@ -25,9 +39,20 @@ export default class CX extends CommandInterface {
 				cxBrokerOne(filter: {ticker: "${ticker}"}) {
 					material {
 						name
-					}
+					},
 					ticker,
-					price {
+					bid {
+						price {
+							amount,
+							currency
+						},
+						amount
+					},
+					ask {
+						price {
+							amount,
+							currency
+						},
 						amount
 					}
 				}
