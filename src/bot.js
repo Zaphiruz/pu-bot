@@ -63,6 +63,7 @@ export default class Bot {
 	}
 
 	async callAction(e, cmd, args, type) {
+		console.time('Action')
 		try {
 			if (cmd in this._.commands[type]) {
 				console.log('Running command', cmd, args);
@@ -72,5 +73,6 @@ export default class Bot {
 			e.channel.send(`That command failed. ${cmd}: ${args}`);
 			throw err;
 		}
+		console.timeEnd('Action')
 	}
 }
