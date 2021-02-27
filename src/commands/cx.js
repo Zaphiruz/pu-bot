@@ -1,9 +1,32 @@
 import CommandInterface from './-interface';
-import { request, gql } from 'graphql-request';
+import { query } from '../utils/graphql-query-helper'
 import AsciiTable from 'ascii-data-table'
 import moment from 'moment';
 
 const CURRENCY = /\.\w{2}\d$/i;
+const cxBrokerQuery = {
+	ticker: true,
+	material: {
+		name: true
+	},
+	bid: {
+		price: {
+			amount: true,
+			currency: true
+		},
+		amount: true
+	},
+	ask: {
+		price: {
+			amount: true,
+			currency: true
+		},
+		amount: true
+	},
+	priceTime: {
+		timestamp: true
+	}
+};
 
 export default class CX extends CommandInterface {
 	constructor(bot, settings) {
@@ -19,15 +42,17 @@ export default class CX extends CommandInterface {
 
 		let brokers = []
 		if (!CURRENCY.test(ticker)) {
-			let materialId = ticker.slice(0, 3);
-			let material = await this.fetchMaterial(materialId);
+			let materialTicker = ticker.slice(0, 3);
+			let material = await query(this.settings.api, 'materialOne', {ticker: materialTicker}, {
+				id: true
+			});
 			if (!material) {
-				return e.channel.send(`I couldn't find a material for ${materialId}`);
+				return e.channel.send(`I couldn't find a material for ${materialTicker}`);
 			}
 
-			brokers = await this.fetchCxBroker({material: material.id}, 'cxBrokerMany');
+			brokers = await query(this.settings.api, 'cxBrokerMany', {material: material.id}, cxBrokerQuery);
 		} else {
-			let broker = await this.fetchCxBroker({ticker});
+			let broker = await query(this.settings.api, 'cxBrokerOne', {ticker}, cxBrokerQuery);
 			
 			brokers = [broker];
 		}
@@ -63,48 +88,6 @@ export default class CX extends CommandInterface {
 
 	help(e, args) {
 		e.channel.send('Send this command with your favorite cx ticker! i.e. `!cx RAT.NC1`');
-	}
-
-	fetchCxBroker(query, method = 'cxBrokerOne') {
-		let [[param, value]] = Object.entries(query);
-
-		return request(this.settings.api, gql`
-			query {
-				${method}(filter: {${param}: "${value}"}) {
-					material {
-						name
-					},
-					ticker,
-					bid {
-						price {
-							amount,
-							currency
-						},
-						amount
-					},
-					ask {
-						price {
-							amount,
-							currency
-						},
-						amount
-					}
-					priceTime {
-						timestamp
-					}
-				}
-			}
-		`).then(data => data[method])
-	}
-
-	fetchMaterial(ticker) {
-		return request(this.settings.api, gql`
-			query {
-				materialOne(filter: {ticker: "${ticker}"}) {
-					id
-				}
-			}
-		`).then(data => data.materialOne)
 	}
 }
 

@@ -1,6 +1,16 @@
 import CommandInterface from './-interface';
-import { request, gql } from 'graphql-request';
+import { query } from '../utils/graphql-query-helper'
 import AsciiTable from 'ascii-data-table'
+
+const brokerQuery = {
+	price:  {
+		close : {
+			rate: true,
+			base: true,
+			quote: true,
+		}
+	}
+}
 
 export default class Ping extends CommandInterface {
 	constructor(bot, settings) {
@@ -16,20 +26,18 @@ export default class Ping extends CommandInterface {
 
 		let brokers;
 		if (base && quote) {
-			let broker = await this.fetch('fxBrokerOne', { base, quote });
+			let broker = await query(this.settings.api, 'fxBrokerOne', { base, quote }, brokerQuery);
 			brokers = [broker];
 			if (!broker) {
 				return e.channel.send(`I couldn't find a broker for ${base} => ${quote}`);
 			}
 		} else if (base) {
-			let [base] = args;
-
-			brokers = await this.fetch('fxBrokerMany', { base });
+			brokers = await query(this.settings.api, 'fxBrokerMany', { base }, brokerQuery);
 			if (!brokers.length) {
 				return e.channel.send(`I couldn't find any brokers for ${base}`);
 			}
 		} else {
-			brokers = await this.fetch('fxBrokerMany');
+			brokers = await query(this.settings.api, 'fxBrokerMany', null, brokerQuery);
 			if (!brokers.length) {
 				return e.channel.send(`I couldn't find any brokers`);
 			}
@@ -41,37 +49,6 @@ export default class Ping extends CommandInterface {
 
 	help(e, args) {
 		e.channel.send('Send this command with your favorite currencies, or leave it blank for all options!\ni.e. `!fx NCC ICA`\ni.e. `!fx NCC`\ni.e.`!fx`');
-	}
-
-	fetch(method, filter) {
-		let filterString = '';
-		if (filter) {
-			let queries = [];
-			for (let [key, value] of Object.entries(filter)) {
-				queries.push(`${key}: "${value}",`);
-			}
-			queries[queries.length - 1] = queries[queries.length - 1].slice(0, -1); // last ,
-
-			filterString = [
-				'(filter: {',
-				...queries,
-				'})'
-			].join();
-		}
-
-		return request(this.settings.api, gql`
-			query {
-				${method}${filterString} {
-					price {
-						close {
-							rate,
-							base,
-							quote
-						}
-					}
-				}
-			}
-		`).then(data => data[method])
 	}
 
 	buildDisplay(...brokers) {
