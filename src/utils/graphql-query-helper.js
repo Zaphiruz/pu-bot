@@ -12,7 +12,11 @@ function _makeFilterString(filter) {
 	if (filter) {
 		let queries = [];
 		for (let [key, value] of Object.entries(filter)) {
-			queries.push(`${key}: "${value}",`);
+			if (Array.isArray(value)) {
+				queries.push(`${key}: [${value.map(v => `"${v}"`).join(',')}],`);
+			} else {
+				queries.push(`${key}: "${value}",`);
+			}
 		}
 
 		filterArray = [

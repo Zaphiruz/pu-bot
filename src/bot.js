@@ -5,6 +5,7 @@ import Cx from './commands/cx';
 import Help from './commands/help';
 import Fx from './commands/fx';
 import Bbc from './commands/bbc';
+import Bbcc from './commands/bbcc';
 
 export default class Bot {
 	static get EVENT_TYPES() {
@@ -28,6 +29,7 @@ export default class Bot {
 				cx: new Cx(this._.bot, this.settings),
 				fx: new Fx(this._.bot, this.settings),
 				bbc: new Bbc(this._.bot, this.settings),
+				bbcc: new Bbcc(this._.bot, this.settings),
 				help: new Help(this._.bot, this.settings, this),
 			}
 		}
