@@ -1,6 +1,6 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
-import AsciiTable from 'ascii-data-table'
+import AsciiTable from 'ascii-table';
 
 const brokerQuery = {
 	price:  {
@@ -62,10 +62,10 @@ export default class Ping extends CommandInterface {
 			// base data
 			let baseArrayIndex = lookupTable.base[base];
 			if(!baseArrayIndex) {
-				// ugh. if this is hard coded to 5, the N/A's stick out on smaller querys.
+				// ugh. if this is hard coded to 5, the ---'s stick out on smaller querys.
 				// but if you only go off of quote length, its wrong ONLY when all are called
 				let length = Math.min(5, brokers.length);
-				let baseArray = Array(length + 1).fill('N/A', 1);
+				let baseArray = Array(length + 1).fill('---', 1);
 				baseArray[0] = base;
 				lookupTable.base[base] = baseArrayIndex = items.length;
 				items.push(baseArray);
@@ -88,10 +88,15 @@ export default class Ping extends CommandInterface {
 				quote: {}
 			},
 			items: [
-				["~~~"]
+				[]
 			]
 		});
 
-		return AsciiTable.table(items, 200);
+		let table = new AsciiTable();
+		for (let row of items) {
+			table.addRow(row);
+		}
+
+		return table.toString();
 	}
 }

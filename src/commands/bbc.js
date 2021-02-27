@@ -1,5 +1,6 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
+import AsciiTable from 'ascii-table';
 
 const buildingQuery = {
 	name: true,
@@ -9,6 +10,12 @@ const buildingQuery = {
 	workforceCapacities: {
 		level: true,
 		capacity: true
+	},
+	materials: {
+		amount: true,
+		material: {
+			name: true
+		}
 	}
 };
 
@@ -32,9 +39,20 @@ export default class Buildinginfo extends CommandInterface {
 			return e.channel.send(`I couldn't find a building for ${ticker}`);
 		}
 
-		console.log(building);
+		let table = new AsciiTable(building.name)
+			.addRow('area', building.area, '')
+			.addRow('category', building.expertiseCategory, '')
+			.addRow('type', building.type, '')
+			
+		for (let { level, capacity } of building.workforceCapacities || [] ) {
+			table.addRow('workforce', level, capacity)
+		}
 
-		e.channel.send(JSON.stringify(building));
+		for (let { amount, material } of building.materials || [] ) {
+			table.addRow('material', material && material.name, amount);
+		}
+
+		e.channel.send(`\`\`\`\n${table.toString()}\n\`\`\``);
 	}
 
 	help(e, args) {

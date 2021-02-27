@@ -1,6 +1,6 @@
 import CommandInterface from './-interface';
-import { query } from '../utils/graphql-query-helper'
-import AsciiTable from 'ascii-data-table'
+import { query } from '../utils/graphql-query-helper';
+import AsciiTable from 'ascii-table';
 import moment from 'moment';
 
 const CURRENCY = /\.\w{2}\d$/i;
@@ -62,28 +62,18 @@ export default class CX extends CommandInterface {
 		}
 
 		let materialName = brokers[0].material && brokers[0].material.name || 'N/A';
-		let headerData = [
-			["Material", materialName],
-		];
-		let tableData = [
-			['Ticker', 'Bid', 'Ask', 'Time']
-		]
+		let table = new AsciiTable(materialName)
+			.setHeading('Ticker', 'Bid', 'Ask', 'Time');
 
 		for(let broker of brokers) {
 			let bid = broker.bid ? `${broker.bid.price.amount} ${broker.bid.price.currency} (${broker.bid.amount})` : 'None'
 			let ask = broker.ask ? `${broker.ask.price.amount} ${broker.ask.price.currency} (${broker.ask.amount})` : 'None'
 			let time = broker.priceTime ? moment(broker.priceTime.timestamp).format('DD MMM, hh:mm A') : 'N/A';
-	
-			let brokerData = [
-				[broker.ticker, `${bid}`, `${ask}`, `${time}`],
-			]
-			
-			tableData.push(...brokerData);
+
+			table.addRow(broker.ticker, `${bid}`, `${ask}`, `${time}`)
 		}
 
-		let header =  AsciiTable.table(headerData, 200);
-		let display = AsciiTable.table(tableData, 200);
-		return e.channel.send(`\`\`\`\n${header}\n${display}\n\`\`\``);
+		return e.channel.send(`\`\`\`\n${table.toString()}\n\`\`\``);
 	}
 
 	help(e, args) {
