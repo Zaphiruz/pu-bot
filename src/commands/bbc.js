@@ -12,13 +12,14 @@ const buildingQuery = {
 		capacity: true
 	},
 	materials: {
-		amount: true,
-		material: {
-			name: true
+		quantities: {
+			amount: true,
+			material: {
+				name: true
+			}
 		}
 	}
 };
-
 export default class Buildinginfo extends CommandInterface {
 	constructor(bot, settings) {
 		super('bbc', bot, settings);
@@ -48,7 +49,7 @@ export default class Buildinginfo extends CommandInterface {
 			table.addRow('workforce', level, capacity)
 		}
 
-		for (let { amount, material } of building.materials || [] ) {
+		for (let { amount, material } of building.materials.quantities || [] ) {
 			table.addRow('material', material && material.name, amount);
 		}
 
