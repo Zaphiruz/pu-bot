@@ -1,6 +1,17 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
 
+const buildingQuery = {
+	name: true,
+	area: true,
+	expertiseCategory: true,
+	type: true,
+	workforceCapacities: {
+		level: true,
+		capacity: true
+	}
+};
+
 export default class Buildinginfo extends CommandInterface {
 	constructor(bot, settings) {
 		super('bbc', bot, settings);
@@ -16,16 +27,7 @@ export default class Buildinginfo extends CommandInterface {
 			return e.channel.send('You need to prodive a ticker. i.e.`HB1`');
 		}
 
-		let building = await query(this.settings.api, 'buildingOptionOne', { ticker }, {
-			name: true,
-			area: true,
-			expertiseCategory: true,
-			type: true,
-			workforceCapacities: {
-				level: true,
-				capacity: true
-			}
-		});
+		let building = await query(this.settings.api, 'buildingOptionOne', { ticker }, buildingQuery);
 		if (!building) {
 			return e.channel.send(`I couldn't find a building for ${ticker}`);
 		}
