@@ -15,7 +15,6 @@ function _makeFilterString(filter) {
 			queries.push(`${key}: "${value}",`);
 		}
 
-		console.log(queries)
 		filterArray = [
 			'(filter: {',
 			...queries,
