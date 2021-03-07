@@ -1,4 +1,4 @@
 {
 	"commandToken": "!",
-	"api": "https://pu-api.herokuapp.com/graphql"
+	"api": "https://api.prosperon.app/graphql"
 }
