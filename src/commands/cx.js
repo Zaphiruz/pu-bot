@@ -1,5 +1,6 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper';
+import { NOT_NULL } from '../utils/functions';
 import AsciiTable from 'ascii-table';
 import moment from 'moment';
 
@@ -56,6 +57,8 @@ export default class CX extends CommandInterface {
 			
 			brokers = [broker];
 		}
+
+		brokers = brokers.filter(NOT_NULL);
 
 		if (!brokers.length) {
 			return e.channel.send(`I couldn't find a broker for ${ticker}`);
