@@ -120,9 +120,9 @@ export default class BuildingPricing extends CommandInterface {
 			}
 			for (let [material, prices] of  Object.entries(materialData)) {
 				table.addRow(material, prices.amount, `${prices.ask || '---'} ${currency}`, `${prices.bid || '---'} ${currency}`, `${prices.avg || '---'} ${currency}`);
-				sum.ask += isNaN(parseFloat(prices.ask)) ? 0 : parseFloat(prices.ask);
-				sum.bid += isNaN(parseFloat(prices.bid)) ? 0 : parseFloat(prices.bid);
-				sum.avg += isNaN(parseFloat(prices.avg)) ? 0 : parseFloat(prices.avg);
+				sum.ask += Math.round(isNaN(parseFloat(prices.ask)) ? 0 : parseFloat(prices.ask));
+				sum.bid += Math.round(isNaN(parseFloat(prices.bid)) ? 0 : parseFloat(prices.bid));
+				sum.avg += Math.round(isNaN(parseFloat(prices.avg)) ? 0 : parseFloat(prices.avg));
 			}
 			table.addRow();
 			table.addRow('Total', null, `${sum.ask || '---'} ${currency}`, `${sum.bid || '---'} ${currency}`, `${sum.avg || '---'} ${currency}`);

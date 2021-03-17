@@ -7,6 +7,7 @@ import Fx from './commands/fx';
 import Bbc from './commands/bbc';
 import Bbcc from './commands/bbcc';
 import Mat from './commands/mat';
+import Trade from './commands/trade';
 
 export default class Bot {
 	static get EVENT_TYPES() {

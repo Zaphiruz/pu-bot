@@ -1,6 +1,7 @@
 import CommandInterface from './-interface';
-import { query } from '../utils/graphql-query-helper'
+import { query } from '../utils/graphql-query-helper';
 import AsciiTable from 'ascii-table';
+import { camelToText } from '../utils/strings';
 
 const materialQuery = {
 	name: true,
@@ -34,8 +35,7 @@ export default class Mat extends CommandInterface {
 			return e.channel.send(`I couldn't find a material for ${ticker}`);
 		}
 
-		let table = new AsciiTable(mat.name);
-		table.addRow("Name", mat.name.toUpperCase())
+		let table = new AsciiTable(camelToText(mat.name).toUpperCase());
 		table.addRow("Ticker", mat.ticker)
 		table.addRow("Category", mat.category && mat.category.name.toUpperCase())
 		table.addRow("Volume", mat.volume)
