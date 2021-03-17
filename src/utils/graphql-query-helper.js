@@ -4,6 +4,8 @@ export function query(url, method, filter, body) {
 	let filterString = _makeFilterString(filter);
 	let bodyString = _makeBodyString(body);
 	let queryString = `query { ${method}${filterString} { \n${bodyString}\n } }`
+
+	console.log('fetch ', url);
 	return request(url, queryString).then(data => data[method]);
 }
 
