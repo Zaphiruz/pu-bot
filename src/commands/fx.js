@@ -26,13 +26,13 @@ export default class Ping extends CommandInterface {
 
 		let brokers;
 		if (base && quote) {
-			let broker = await query(this.settings.api, 'fxBrokerOne', { base, quote }, brokerQuery);
+			let broker = await query(this.settings.api, 'fxBrokerOne', { pair: { base, quote }}, brokerQuery);
 			brokers = [broker];
 			if (!broker) {
 				return e.channel.send(`I couldn't find a broker for ${base} => ${quote}`);
 			}
 		} else if (base) {
-			brokers = await query(this.settings.api, 'fxBrokerMany', { base }, brokerQuery);
+			brokers = await query(this.settings.api, 'fxBrokerMany', { pair: { base } }, brokerQuery);
 			if (!brokers.length) {
 				return e.channel.send(`I couldn't find any brokers for ${base}`);
 			}
