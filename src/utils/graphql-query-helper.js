@@ -13,10 +13,27 @@ function _makeFilterString(filter) {
 	let filterArray = [];
 	if (filter) {
 		let queries = [];
+		console.log("1");
 		for (let [key, value] of Object.entries(filter)) {
+			console.log("2");
 			if (Array.isArray(value)) {
+				console.log("3");
+				// Value is array
 				queries.push(`${key}: [${value.map(v => `"${v}"`).join(',')}],`);
-			} else {
+			} else if (value.constructor == Object) {
+				// Value is dictionary
+				console.log("4");
+				if (key.toLocaleUpperCase() == "OR") {
+					for (let [subkey, subvalue] of value) {
+						console.log(`${key}: {${subkey}: ${subvalue}}`);
+						queries.push(`${key}: {${subkey}: ${subvalue}}`);
+					}
+				} else {
+					console.log("Value is something other than 'OR'");
+                }
+            } else {
+				console.log("10");
+				// Value is string??? 
 				queries.push(`${key}: "${value}",`);
 			}
 		}
