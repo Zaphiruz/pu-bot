@@ -49,23 +49,19 @@ export default class Trade extends CommandInterface {
         try {
 			let [origin, destination, amount] = args;
 
-			if (!origin || !destination || !amount) {
-				return e.channel.send("Need at least three parametors. An origin, a destination, and a dollar amount");
+			if (!origin || !destination) {
+				return e.channel.send("Need at least three parametors. An origin and a destination! i.e. nc1 ic1");
 			}
 
-			let originExchange = []
-			originExchange = await query(this.settings.api, 'exchangeOne', { code: origin }, exchangeQuery);
+			if (!amount) {
+				amount = 10000;
+            }
 
-			let destinationExchange = []
-			destinationExchange = await query(this.settings.api, 'exchangeOne', { code: destination }, exchangeQuery);
+			let originBrokers = await returnExchangeBrokers(this.settings.api, origin);
 
-			let originBrokers = []
-			originBrokers = await query(this.settings.api, 'cxBrokerMany', { exchange: originExchange.id }, cxBrokerQuery);
+			let destinationBrokers = await returnExchangeBrokers(this.settings.api, destination);
 
-			let destinationBrokers = []
-			destinationBrokers = await query(this.settings.api, 'cxBrokerMany', { exchange: destinationExchange.id, OR: { exchange: originExchange.id } }, cxBrokerQuery);
-
-			console.log(destinationBrokers);
+			console.log(originBrokers, destinationBrokers);
 
 			return e.channel.send(['pong -->', ...args].join(' '));
         } catch (err) {
@@ -77,4 +73,9 @@ export default class Trade extends CommandInterface {
 	help(e, args) {
 		e.channel.send('replys with "pong" and any arguments. Really just for testing');
 	}
+}
+
+async function returnExchangeBrokers(api, exchangeCode) {
+	let exchange = await query(api, 'exchangeOne', { code: exchangeCode }, exchangeQuery);
+	return await query(api, 'cxBrokerMany', { exchange: exchange.id }, cxBrokerQuery);
 }

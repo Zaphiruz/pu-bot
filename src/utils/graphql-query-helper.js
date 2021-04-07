@@ -21,6 +21,9 @@ function _makeFilterString(filter) {
 				
 				case typeof(value) === 'object':
 					return `${key}: { ${Object.entries(value).map(thingToString).join('')} }`
+
+				case typeof (value) === 'number':
+					return `${key}: ${value},`
 				
 				default:
 					return `${key}: "${value}",`
