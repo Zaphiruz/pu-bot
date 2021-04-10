@@ -24,6 +24,7 @@
     "esm": "^3.2.25",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1"
   }
 }

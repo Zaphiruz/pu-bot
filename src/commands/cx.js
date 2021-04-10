@@ -3,6 +3,7 @@ import { query } from '../utils/graphql-query-helper';
 import { NOT_NULL } from '../utils/functions';
 import AsciiTable from 'ascii-table';
 import moment from 'moment';
+import { toUpper, startCase } from 'lodash';
 
 const CURRENCY = /\.\w{2}\d$/i;
 const cxBrokerQuery = {
@@ -65,12 +66,12 @@ export default class CX extends CommandInterface {
 		}
 
 		let materialName = brokers[0].material && brokers[0].material.name || 'N/A';
-		let table = new AsciiTable(materialName)
+		let table = new AsciiTable(startCase(materialName))
 			.setHeading('Ticker', 'Bid', 'Ask', 'Time');
 
 		for(let broker of brokers) {
-			let bid = broker.bid ? `${broker.bid.price.amount} ${broker.bid.price.currency} (${broker.bid.amount})` : 'None'
-			let ask = broker.ask ? `${broker.ask.price.amount} ${broker.ask.price.currency} (${broker.ask.amount})` : 'None'
+			let bid = broker.bid ? `${broker.bid.price.amount.toFixed(2)} ${broker.bid.price.currency} (${broker.bid.amount})` : 'None'
+			let ask = broker.ask ? `${broker.ask.price.amount.toFixed(2)} ${broker.ask.price.currency} (${broker.ask.amount})` : 'None'
 			let time = broker.priceTime ? moment(broker.priceTime.timestamp).format('DD MMM, hh:mm A') : 'N/A';
 
 			table.addRow(broker.ticker, `${bid}`, `${ask}`, `${time}`)

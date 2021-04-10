@@ -1,6 +1,7 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
 import AsciiTable from 'ascii-table';
+import { toUpper, startCase } from 'lodash';
 
 const buildingQuery = {
 	name: true,
@@ -51,7 +52,7 @@ export default class BuildingPricing extends CommandInterface {
 	}
 
 	processArgs(args) {
-		return args.map(arg => arg.toUpperCase());
+		return args.map(toUpper);
 	}
 
 	async action(e, args) {
@@ -110,7 +111,7 @@ export default class BuildingPricing extends CommandInterface {
 		
 
 		for (let [currency, materialData] of Object.entries(prices)) {
-			let table = new AsciiTable(`${building.name} --- ${currency}`)
+			let table = new AsciiTable(`${startCase(building.name)} --- ${currency}`)
 				.setHeading('Material', 'Amount', 'Ask (Total)', 'Bid (Total)', 'Average (Total)');
 
 			let sum = {
@@ -119,13 +120,13 @@ export default class BuildingPricing extends CommandInterface {
 				avg: 0
 			}
 			for (let [material, prices] of  Object.entries(materialData)) {
-				table.addRow(material, prices.amount, `${prices.ask || '---'} ${currency}`, `${prices.bid || '---'} ${currency}`, `${prices.avg || '---'} ${currency}`);
+				table.addRow(material, prices.amount, `${prices.ask.toFixed(2) || '---'} ${currency}`, `${prices.bid.toFixed(2) || '---'} ${currency}`, `${prices.avg.toFixed(2) || '---'} ${currency}`);
 				sum.ask += Math.round(isNaN(parseFloat(prices.ask)) ? 0 : parseFloat(prices.ask));
 				sum.bid += Math.round(isNaN(parseFloat(prices.bid)) ? 0 : parseFloat(prices.bid));
 				sum.avg += Math.round(isNaN(parseFloat(prices.avg)) ? 0 : parseFloat(prices.avg));
 			}
 			table.addRow();
-			table.addRow('Total', null, `${sum.ask || '---'} ${currency}`, `${sum.bid || '---'} ${currency}`, `${sum.avg || '---'} ${currency}`);
+			table.addRow('Total', null, `${sum.ask.toFixed(2) || '---'} ${currency}`, `${sum.bid.toFixed(2) || '---'} ${currency}`, `${sum.avg.toFixed(2) || '---'} ${currency}`);
 
 			e.channel.send(`\`\`\`\n${table.toString()}\n\`\`\``);
 		}

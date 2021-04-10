@@ -1,7 +1,7 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper';
 import AsciiTable from 'ascii-table';
-import { camelToText } from '../utils/strings';
+import { toUpper, startCase } from 'lodash';
 
 const materialQuery = {
 	name: true,
@@ -19,7 +19,7 @@ export default class Mat extends CommandInterface {
 	}
 
 	processArgs(args) {
-		return args.map(arg => arg.toUpperCase());
+		return args.map(toUpper);
     }
 
 	async action(e, args) {
@@ -35,9 +35,9 @@ export default class Mat extends CommandInterface {
 			return e.channel.send(`I couldn't find a material for ${ticker}`);
 		}
 
-		let table = new AsciiTable(camelToText(mat.name).toUpperCase());
+		let table = new AsciiTable(startCase(mat.name));
 		table.addRow("Ticker", mat.ticker)
-		table.addRow("Category", mat.category && mat.category.name.toUpperCase())
+		table.addRow("Category", mat.category && startCase(mat.category.name))
 		table.addRow("Volume", mat.volume)
 		table.addRow("weight", mat.weight)
 

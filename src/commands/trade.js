@@ -1,7 +1,6 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper';
 import AsciiTable from 'ascii-table';
-import { camelToText } from '../utils/strings';
 
 const exchangeQuery = {
 	id: true,

@@ -1,6 +1,7 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
 import AsciiTable from 'ascii-table';
+import { toUpper, startCase, head, compact } from 'lodash';
 
 const brokerQuery = {
 	price:  {
@@ -65,7 +66,7 @@ export default class Ping extends CommandInterface {
 				// ugh. if this is hard coded to 5, the ---'s stick out on smaller querys.
 				// but if you only go off of quote length, its wrong ONLY when all are called
 				let length = Math.min(5, brokers.length);
-				let baseArray = Array(length + 1).fill('---', 1);
+				let baseArray = Array(length + 1).fill('-----', 1);
 				baseArray[0] = base;
 				lookupTable.base[base] = baseArrayIndex = items.length;
 				items.push(baseArray);
@@ -79,7 +80,7 @@ export default class Ping extends CommandInterface {
 				items[0][quoteIndex] = quote;
 			}
 
-			baseArray[quoteIndex] = rate;
+			baseArray[quoteIndex] = rate.toFixed(3);
 
 			return c
 		}, {
@@ -92,7 +93,8 @@ export default class Ping extends CommandInterface {
 			]
 		});
 
-		let table = new AsciiTable();
+		let bases = compact(items.map(head))
+		let table = new AsciiTable(`${startCase("Foreign Exchange")} -- ${bases.join(', ')}`);
 		for (let row of items) {
 			table.addRow(row);
 		}
