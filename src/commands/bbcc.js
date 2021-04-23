@@ -58,7 +58,7 @@ export default class BuildingPricing extends CommandInterface {
 	async action(e, args) {
 		let [ticker, market] = args;
 		if (!ticker) {
-			return e.channel.send('You need to prodive a ticker. i.e.`HB1`');
+			return e.channel.send('You need to provide a ticker. i.e.`HB1`');
 		}
 
 		let building = await query(this.settings.api, 'buildingOptionOne', { ticker }, buildingQuery);
