@@ -1,6 +1,7 @@
 import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper'
 import AsciiTable from 'ascii-table';
+import { toUpper, startCase, capitalize } from 'lodash';
 
 const buildingQuery = {
 	name: true,
@@ -26,7 +27,7 @@ export default class Buildinginfo extends CommandInterface {
 	}
 
 	processArgs(args) {
-		return args.map(arg => arg.toUpperCase());
+		return args.map(toUpper);
 	}
 
 	async action(e, args) {
@@ -40,17 +41,17 @@ export default class Buildinginfo extends CommandInterface {
 			return e.channel.send(`I couldn't find a building for ${ticker}`);
 		}
 
-		let table = new AsciiTable(building.name)
-			.addRow('area', building.area, '')
-			.addRow('category', building.expertiseCategory, '')
-			.addRow('type', building.type, '')
+		let table = new AsciiTable(startCase(building.name))
+			.addRow('Area', building.area, '')
+			.addRow('Category', startCase(capitalize(building.expertiseCategory)), '')
+			.addRow('Type', startCase(capitalize(building.type)), '')
 			
 		for (let { level, capacity } of building.workforceCapacities || [] ) {
-			table.addRow('workforce', level, capacity)
+			table.addRow('Workforce', startCase(capitalize(level)), capacity)
 		}
 
 		for (let { amount, material } of building.materials.quantities || [] ) {
-			table.addRow('material', material && material.name, amount);
+			table.addRow('Material', startCase(material && material.name), amount);
 		}
 
 		e.channel.send(`\`\`\`\n${table.toString()}\n\`\`\``);

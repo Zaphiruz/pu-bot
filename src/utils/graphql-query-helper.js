@@ -5,6 +5,8 @@ export function query(url, method, filter, body) {
 	let bodyString = _makeBodyString(body);
 	let queryString = `query { ${method}${filterString} { \n${bodyString}\n } }`
 
+	console.log(filterString)
+
 	console.log('fetch ', url);
 	return request(url, queryString).then(data => data[method]);
 }
@@ -12,14 +14,23 @@ export function query(url, method, filter, body) {
 function _makeFilterString(filter) {
 	let filterArray = [];
 	if (filter) {
-		let queries = [];
-		for (let [key, value] of Object.entries(filter)) {
-			if (Array.isArray(value)) {
-				queries.push(`${key}: [${value.map(v => `"${v}"`).join(',')}],`);
-			} else {
-				queries.push(`${key}: "${value}",`);
+		const thingToString = ([key, value]) =>{
+			switch (true) {
+				case Array.isArray(value):
+					return `${key}: [${value.map(v => `"${v}"`).join(',')}],`;
+				
+				case typeof(value) === 'object':
+					return `${key}: { ${Object.entries(value).map(thingToString).join('')} }`
+
+				case typeof (value) === 'number':
+					return `${key}: ${value},`
+				
+				default:
+					return `${key}: "${value}",`
 			}
 		}
+
+		let queries = Object.entries(filter).map(thingToString);
 
 		filterArray = [
 			'(filter: {',

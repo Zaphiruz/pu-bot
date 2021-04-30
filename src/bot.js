@@ -7,6 +7,8 @@ import Fx from './commands/fx';
 import Bbc from './commands/bbc';
 import Bbcc from './commands/bbcc';
 import Mat from './commands/mat';
+import Trade from './commands/trade';
+import Suggest from './commands/suggest';
 
 export default class Bot {
 	static get EVENT_TYPES() {
@@ -32,6 +34,8 @@ export default class Bot {
 				bbc: new Bbc(this._.bot, this.settings),
 				bbcc: new Bbcc(this._.bot, this.settings),
 				mat: new Mat(this._.bot, this.settings),
+				trade: new Trade(this._.bot, this.settings),
+				suggest: new Suggest(this._.bot, this.settings),
 				help: new Help(this._.bot, this.settings, this),
 			}
 		}

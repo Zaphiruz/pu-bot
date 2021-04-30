@@ -1,4 +1,4 @@
 {
 	"commandToken": "!",
-	"api": "https://api.prosperon.app/graphql"
+	"api": "http://localhost:8080/graphql"
 }
