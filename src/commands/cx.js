@@ -2,7 +2,9 @@ import CommandInterface from './-interface';
 import { query } from '../utils/graphql-query-helper';
 import AsciiTable from 'ascii-table';
 import moment from 'moment';
-import { toUpper, startCase, isNil } from 'lodash';
+import { toUpper, startCase, isNil, negate } from 'lodash';
+
+const notNil = negate(isNil);
 
 const CURRENCY = /\.\w{2}\d$/i;
 const cxBrokerQuery = {
@@ -58,7 +60,7 @@ export default class CX extends CommandInterface {
 			brokers = [broker];
 		}
 
-		brokers = brokers.filter(isNil);
+		brokers = brokers.filter(notNil);
 		if (!brokers.length) {
 			return e.channel.send(`I couldn't find a broker for ${ticker}`);
 		}
