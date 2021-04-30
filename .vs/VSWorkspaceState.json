@@ -5,6 +5,6 @@
     "\\src\\commands",
     "\\src\\utils"
   ],
-  "SelectedNode": "\\src\\commands\\cx.js",
+  "SelectedNode": "\\src\\utils\\graphql-query-helper.js",
   "PreviewInSolutionExplorer": false
 }
